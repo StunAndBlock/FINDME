@@ -1,8 +1,12 @@
 #include "stateModule.h"
+#include "fileHandler.h"
+#include "boolType.h"
 #include <stdio.h>
 #include <ncurses.h>
+#include <string.h>
+#include <stdlib.h>
 int main(void){
-
+    err_t new;
     initscr();
     keypad(stdscr, TRUE);
     savetty();
@@ -16,15 +20,23 @@ int main(void){
         endwin();
         printf("Your terminal does not support color\n");
     }
-    STATE _current=LOGO;
+    STATE _current=WORK;
+    
+    if(!startCHK()){
+        if(!gettingStarted())
+        _current=ERROR;
+        new.errStr=(char*)malloc(strlen("error while creating and loading cfg file"));  //error while creating and loading cfg file
+        new.errStr="error while creating and loading cfg file";
+    }
     
 
     while(_current!=EXIT){
         getmaxyx(stdscr, _currentRes.y, _currentRes.x);
         
         switch(_current){
-           case LOGO:
-            mvprintw(_currentRes.y-1,1,"%c",'A');
+           case ERROR:
+           errorHandler(new);
+            _current=EXIT;
             break;
             default:
             break;
